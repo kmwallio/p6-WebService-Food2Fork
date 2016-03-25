@@ -5,7 +5,7 @@
 ## Installation
 
 ```
-panda install WebService::Food2Fork
+panda install git://github.com/kmwallio/p6-WebService-Food2Fork.git
 ```
 
 ## Usage
