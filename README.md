@@ -26,7 +26,7 @@ my $food = $yum.search('bbq chicken');
 
 $food looks something like:
 
-```
+``` json
 {
   count   => 30.Int,
   recipes => [
