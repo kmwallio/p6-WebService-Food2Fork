@@ -1,0 +1,13 @@
+{
+  "perl" : "6.*",
+  "name" : "WebService::Food2Fork",
+  "version" : "0.0.1",
+  "description" : "Access the Food2Fork API from your Perl 6 app.",
+  "authors" : [ "KM Wallio" ],
+  "provides" : {
+      "WebService::Food2Fork" : "lib/WebService/Food2Fork.pm6"
+  },
+  "depends" : ["Net::Curl", "JSON::Fast", "DBIish"],
+  "resources" : [ ],
+  "source-url" : "git://github.com/kmwallio/p6-WebService-Food2Fork.git"
+}

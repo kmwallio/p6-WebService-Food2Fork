@@ -1,5 +1,6 @@
 use v6;
 use Net::Curl;
+use Net::Curl::Easy;
 use JSON::Fast;
 use DBIish;
 
@@ -78,20 +79,36 @@ module WebService::Food2Fork {
     method !search-db(Str $query) {
       self!setup-db();
 
-      my $search = $!dbh.prepare("SELECT search_result FROM f2f_search WHERE search_query='?'");
+      my $search = $!dbh.prepare("SELECT search_result FROM f2f_search WHERE search_query = ? ");
       $search.execute($query);
 
       my @result = $search.fetchrow();
       return (@result.elems == 0) ?? False !! @result[0];
     }
 
+    method !cache-db(Str $query, Str $result) {
+      self!setup-db();
+
+      my $search = $!dbh.prepare("INSERT INTO f2f_search (search_query, search_result, search_time) VALUES ( ? , ? , ? ) ");
+      $search.execute($query, $result, now.floor());
+      $search.finish;
+    }
+
     method search(Str $query) {
       my $cache-result = self!search-db($query);
-      unless ($cache-result) {
-        
+      if ($cache-result) {
+        return from-json($cache-result);
       } else {
-        return $result;
+        my $query-url = $query;
+        $query-url ~~ s:g/\s+/%20/;
+        my $curl = Net::Curl::Easy.new(:url('http://food2fork.com/api/search?key=' ~ $.key ~ '&q=' ~ $query-url));
+        my $result = $curl.download;
+        if ($result) {
+          self!cache-db($query, $result);
+          return from-json($result);
+        }
       }
+      return False;
     }
   }
 }

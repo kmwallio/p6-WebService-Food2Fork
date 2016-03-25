@@ -15,40 +15,54 @@ panda install WebService::Food2Fork
 ``` perl6
 use WebService::Food2Fork;
 
-my $yum = Food2Fork.new(
-              key => 'API Key',   # Required
-              cache => ':memory:' # Optional
-              );
+my $yum = Food2Fork.new(:key<API Key>);
 ```
 
 ### Searching
 
 ``` perl6
-my $food = $yum.search('pizza');
+my $food = $yum.search('bbq chicken');
 ```
 
-### Get a recipe
+$food looks something like:
 
-``` perl6
-my $time-to-cook = $yum.get('recipe-id');
+```
+{
+  count   => 30.Int,
+  recipes => [
+    {
+      f2f_url       => "http://food2fork.com/view/41470".Str,
+      image_url     => "http://static.food2fork.com/BBQChickenPizzawithCauliflowerCrust5004699695624ce.jpg".Str,
+      publisher     => "Closet Cooking".Str,
+      publisher_url => "http://closetcooking.com".Str,
+      recipe_id     => "41470".Str,
+      social_rank   => 99.9999999999994.Rat,
+      source_url    => "http://www.closetcooking.com/2013/02/cauliflower-pizza-crust-with-bbq.html".Str,
+      title         => "Cauliflower Pizza Crust (with BBQ Chicken Pizza)".Str,
+    },
+    ...
+  ]
+}
 ```
 
 ### Caching Results
 
 Using the free tier?  You can use a cache with expiration.  Use `:memory:` as the database to have a temporary database.
 
-By default, searches are cached for 15 minutes.  Recipes are cached for 24 hours.  You can change this.
+By default, searches are cached for 15 minutes.  Recipes are cached for 24 hours.  You can change this.  *There currently isn't an option not to cache*.
 
 ``` perl6
 use WebService::Food2Fork;
 
 my $yum = Food2Fork.new(
-              key => 'API Key',    # Required
-              cache => ':memory:', # Optional
-              cache_search => 15,  # 15 minutes
-              cache_recipe => 1440 # 1 day
+              :key<API Key>,      # Required
+              :cache<:memory:>,   # Optional
+              :cache_search<15>,  # 15 minutes
+              :cache_recipe<1440> # 1 day
               );
 ```
+
+We'll attempt to use tables `f2f_search` and `f2f_recipe` or we'll die trying...
 
 # Acknowledgements
 
